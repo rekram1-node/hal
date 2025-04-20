@@ -1,0 +1,46 @@
+# https://taskfile.dev
+
+version: "3"
+
+env:
+  PROJECT_NAME: hal
+
+tasks:
+  setup:
+    desc: Install dependencies
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: Build the binary
+    sources:
+      - ./**/*.go
+    generates:
+      - ./{{.PROJECT_NAME}}
+    cmds:
+      - go build
+
+  run:
+    desc: "Runs app"
+    deps: [build]
+    sources:
+      - ./**/*
+      - ./*
+    cmds:
+      - ./{{.PROJECT_NAME}}
+
+  # test:
+  #   desc: Run tests
+  #   env:
+  #     LC_ALL: C
+  #   vars:
+  #     TEST_OPTIONS: '{{default "" .TEST_OPTIONS}}'
+  #     SOURCE_FILES: '{{default "./..." .SOURCE_FILES}}'
+  #     TEST_PATTERN: '{{default "." .TEST_PATTERN}}'
+  #   cmds:
+  #     - go test {{.TEST_OPTIONS}} -failfast -race -coverpkg=./... -covermode=atomic -coverprofile=coverage.txt {{.SOURCE_FILES}} -run {{.TEST_PATTERN}} -timeout=15m
+
+  fmt:
+    desc: gofumpt all code
+    cmds:
+      - gofumpt -w -l .
